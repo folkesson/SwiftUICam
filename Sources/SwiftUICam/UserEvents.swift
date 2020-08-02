@@ -15,6 +15,8 @@ public class UserEvents: ObservableObject {
     @Published public var didAskToRecordVideo = false
     @Published public var didAskToStopRecording = false
     
+    @Published public var frameImage: UIImage?
+    
     public init() {
         
     }

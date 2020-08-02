@@ -40,7 +40,7 @@ public class PreviewView: UIView {
     }
 }
 
-public class CameraViewController: UIViewController {
+public class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     // MARK: Public Variable Declarations
     
     /// Name of the application using the camera
@@ -103,6 +103,8 @@ public class CameraViewController: UIViewController {
     private(set) public var isSessionRunning     = false
     
     // MARK: Private Constant Declarations
+    
+    private let videoCaptureOutput = AVCaptureVideoDataOutput()
     
     /// Current Capture Session
     private let session = AVCaptureSession()
@@ -417,6 +419,17 @@ public class CameraViewController: UIViewController {
             self.movieFileOutput = movieFileOutput
         }
         
+        videoCaptureOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String:kCVPixelFormatType_32BGRA]
+        videoCaptureOutput.alwaysDiscardsLateVideoFrames = true
+        if self.session.canAddOutput(videoCaptureOutput) {
+            let cameraQueue = DispatchQueue(label: "com.SwiftUICam.cameraQueue")
+            videoCaptureOutput.setSampleBufferDelegate(self, queue: cameraQueue)
+            self.session.addOutput(videoCaptureOutput)
+        }
+        else{
+            
+        }
+        
         //End configuration
         session.commitConfiguration()
     }
@@ -441,6 +454,11 @@ public class CameraViewController: UIViewController {
                 creationRequest.addResource(with: .photo, data: photoData, options: nil)
             }, completionHandler: nil)
         }
+    }
+    
+    // MAKR: AVCaptureVideoDataOutputSampleBufferDelegate
+    public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        self.delegate?.didCaptureFrame(output, didOutput: sampleBuffer, from: connection)
     }
     
     // MARK: Public Functions

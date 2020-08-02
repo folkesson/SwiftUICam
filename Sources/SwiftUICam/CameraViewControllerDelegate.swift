@@ -6,6 +6,7 @@
 //  Copyright © 2020 Pierre Véron. All rights reserved.
 //
 import UIKit
+import AVFoundation
 
 public protocol CameraViewControllerDelegate {
 //    func cameraAccessGranted()
@@ -18,6 +19,8 @@ public protocol CameraViewControllerDelegate {
     func didChangeFlashMode()
     func didFocusOnPoint(_ point: CGPoint)
     func didChangeZoomLevel(_ zoom: CGFloat)
+    
+    func didCaptureFrame(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection)
     
     func didStartVideoRecording()
     func didFinishVideoRecording()
